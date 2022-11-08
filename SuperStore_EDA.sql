@@ -44,3 +44,24 @@ FROM Store_Orders$
 GROUP BY Sub_Category, MONTH(Order_Date), YEAR(Order_Date)
 ORDER BY 3,2
 
+-- calculate total sales by month, by year for tech products at the sub product level
+SELECT Month, Year, Sub_Category, SUM(Total_Sales) Total_Month_Sales FROM (
+SELECT MONTH(Order_Date) as Month, YEAR(Order_Date) as Year, Sub_Category, SUM(Sales) AS Total_Sales
+FROM Store_Orders$
+WHERE Category = 'Technology'
+GROUP BY Sub_Category, Order_Date
+) as Temp
+GROUP BY Month, YEAR, Sub_Category
+ORDER BY 2,1
+
+
+-- total tech sales by month by year for only tech products
+SELECT Month, Year, Category, SUM(Total_Sales) AS Total_Months_Sales FROM (
+	SELECT MONTH(Order_Date) as Month, YEAR(Order_Date) as Year, Category, SUM(Sales) AS Total_Sales
+	FROM Store_Orders$
+	WHERE Category = 'Technology'
+	GROUP BY Category, Order_Date
+) as temp
+GROUP BY Month, Year, Category
+ORDER BY 2,1
+-- we will use the above query results for our SARIMAX forecast
